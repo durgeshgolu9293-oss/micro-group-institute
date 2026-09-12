@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" width="400" height="240">
+  <defs>
+    <linearGradient id="bgGrad_pgdca.svg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#DB2777" />
+      <stop offset="100%" stop-color="#831843" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="240" fill="url(#bgGrad_pgdca.svg)" />
+  <circle cx="340" cy="40" r="100" fill="rgba(255,255,255,0.06)" />
+  <circle cx="50" cy="200" r="80" fill="rgba(255,255,255,0.04)" />
+  <rect x="30" y="30" width="50" height="50" rx="12" fill="rgba(255,255,255,0.15)" />
+  <text x="42" y="62" font-family="'Outfit', sans-serif" font-size="20" font-weight="900" fill="#FFFFFF">MG</text>
+  <text x="30" y="140" font-family="'Outfit', sans-serif" font-size="36" font-weight="900" fill="#FFFFFF">PGDCA</text>
+  <text x="30" y="170" font-family="'Plus Jakarta Sans', sans-serif" font-size="15" font-weight="600" fill="#E2E8F0">Post Graduate Diploma</text>
+  <line x1="30" y1="190" x2="160" y2="190" stroke="#FBBF24" stroke-width="3" stroke-linecap="round" />
+</svg>

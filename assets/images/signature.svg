@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 70" width="240" height="70">
+  <!-- Clean, Short, Elegant Cursive Signature of DK Singh in Fountain Navy Blue Ink -->
+  <path d="M 25,48 C 22,25 35,15 42,12 C 55,8 65,22 58,40 C 52,54 30,52 28,32 C 26,18 45,14 62,20 C 72,25 78,38 82,48 M 80,24 C 84,32 92,46 98,47 M 88,36 C 96,32 108,24 116,46 M 122,20 C 128,15 138,16 136,28 C 134,36 122,40 130,46 C 136,50 148,42 154,34 M 158,26 L 160,45 M 166,32 C 170,42 174,46 182,45 M 186,22 C 190,32 192,44 196,46 M 198,34 C 204,30 214,32 218,44 M 25,58 Q 120,52 225,54" 
+        fill="none" 
+        stroke="#0F2D59" 
+        stroke-width="2.6" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+  <!-- Pen dot flourish -->
+  <circle cx="228" cy="53" r="2.2" fill="#0F2D59"/>
+</svg>

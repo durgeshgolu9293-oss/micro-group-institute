@@ -1,0 +1,177 @@
+/* =========================================================
+   MICRO GROUP COMPUTER INSTITUTE - PORTAL & DASHBOARD STYLES
+   ========================================================= */
+
+.dashboard-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background-color: #F1F5F9;
+}
+
+/* Sidebar */
+.portal-sidebar {
+  width: 260px;
+  background: #09172A;
+  color: #94A3B8;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+.sidebar-brand {
+  padding: 22px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  text-decoration: none;
+}
+.sidebar-menu {
+  padding: 16px 12px;
+  list-style: none;
+  margin: 0;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+.sidebar-heading {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 10px 12px 6px;
+}
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  color: #94A3B8;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  transition: all 0.2s ease;
+}
+.sidebar-link i {
+  font-size: 1.15rem;
+  width: 22px;
+  text-align: center;
+}
+.sidebar-link:hover {
+  color: #38BDF8;
+  background: rgba(255, 255, 255, 0.06);
+}
+.sidebar-link.active {
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #0284C7, #0369A1);
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+}
+
+/* Dashboard Content Area */
+.portal-main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.portal-topbar {
+  background: #FFFFFF;
+  height: 68px;
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #E2E8F0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+.portal-content {
+  padding: 28px;
+  flex-grow: 1;
+}
+
+/* KPI Stat Cards */
+.kpi-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 22px;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: transform 0.2s ease;
+}
+.kpi-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+.kpi-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+.kpi-val {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0F172A;
+  font-family: 'Outfit', sans-serif;
+  line-height: 1.1;
+}
+.kpi-label {
+  font-size: 0.84rem;
+  color: #64748B;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+/* Data Table Container */
+.data-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+  overflow: hidden;
+}
+.data-card-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid #E2E8F0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FAFBFD;
+}
+.table-custom th {
+  background: #F8FAFC;
+  color: #475569;
+  font-weight: 600;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 12px 18px;
+  border-bottom: 1px solid #E2E8F0;
+}
+.table-custom td {
+  padding: 14px 18px;
+  font-size: 0.88rem;
+  color: #1E293B;
+  vertical-align: middle;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+@media (max-width: 991px) {
+  .portal-sidebar {
+    position: fixed;
+    top: 0; bottom: 0; left: -260px;
+  }
+  .portal-sidebar.show {
+    left: 0;
+  }
+}
