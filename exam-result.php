@@ -57,9 +57,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $updStmt->execute([$attempted, $correct, $wrong, $unattempted, $totalMarks, $obtainedMarks, $percentage, $grade, $attempt_id]);
 
         // Insert into results table
-        $resStmt = $pdo->prepare("INSERT INTO results (attempt_id, student_id, exam_id, roll_number, total_marks, obtained_marks, percentage, grade, pass_status, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE()) ON DUPLICATE KEY UPDATE obtained_marks=VALUES(obtained_marks), percentage=VALUES(percentage), grade=VALUES(grade), pass_status=VALUES(pass_status)");
-        $resStmt->execute([$attempt_id, $attempt['student_id'], $attempt['exam_id'], $attempt['roll_number'], $totalMarks, $obtainedMarks, $percentage, $grade, $passStatus]);
-        $result_id = $pdo->lastInsertId() ?: 1;
+        // Check if result already exists for this attempt
+        $resChk = $pdo->prepare("SELECT id FROM results WHERE attempt_id = ?");
+        $resChk->execute([$attempt_id]);
+        $existingRes = $resChk->fetch();
+
+        if ($existingRes) {
+            $resStmt = $pdo->prepare("UPDATE results SET total_marks = ?, obtained_marks = ?, percentage = ?, grade = ?, pass_status = ?, date = CURDATE() WHERE attempt_id = ?");
+            $resStmt->execute([$totalMarks, $obtainedMarks, $percentage, $grade, $passStatus, $attempt_id]);
+            $result_id = $existingRes['id'];
+        } else {
+            $resStmt = $pdo->prepare("INSERT INTO results (attempt_id, student_id, exam_id, roll_number, total_marks, obtained_marks, percentage, grade, pass_status, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE())");
+            $resStmt->execute([$attempt_id, $attempt['student_id'], $attempt['exam_id'], $attempt['roll_number'], $totalMarks, $obtainedMarks, $percentage, $grade, $passStatus]);
+            $result_id = $pdo->lastInsertId() ?: 1;
+        }
 
         // Auto-generate Certificate if PASS (>= passing percentage)
         if ($passStatus === 'PASS') {
