@@ -1,0 +1,9 @@
+{
+  "name": "micro-group-institute",
+  "version": "1.0.0",
+  "description": "Micro Group of Computer Institute Platform",
+  "scripts": {
+    "build": "echo 'Build successful'",
+    "start": "php -S 0.0.0.0:$PORT"
+  }
+}

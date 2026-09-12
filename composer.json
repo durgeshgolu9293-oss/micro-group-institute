@@ -1,0 +1,7 @@
+{
+  "name": "durgesh/micro-group",
+  "description": "Micro Group Computer Institute",
+  "require": {
+    "php": ">=7.4"
+  }
+}
