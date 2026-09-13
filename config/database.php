@@ -6,6 +6,76 @@ if (session_status() === PHP_SESSION_NONE) {
 
 $pdo = null;
 
+// 0. Try PostgreSQL (Render Internal Database URL)
+$db_url = getenv('DATABASE_URL');
+if ($db_url) {
+    $dbopts = parse_url($db_url);
+    if (isset($dbopts['scheme']) && $dbopts['scheme'] === 'postgres') {
+        $pg_host = $dbopts["host"] ?? '';
+        $pg_port = $dbopts["port"] ?? 5432;
+        $pg_user = $dbopts["user"] ?? '';
+        $pg_pass = $dbopts["pass"] ?? '';
+        $pg_db   = ltrim($dbopts["path"] ?? '', '/');
+        
+        try {
+            $dsn = "pgsql:host={$pg_host};port={$pg_port};dbname={$pg_db}";
+            $pdo = new PDO($dsn, $pg_user, $pg_pass, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_TIMEOUT => 3
+            ]);
+            
+            $pdo->exec("
+                CREATE TABLE IF NOT EXISTS settings (id SERIAL PRIMARY KEY, key_name VARCHAR(255) NOT NULL UNIQUE, key_value TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+                CREATE TABLE IF NOT EXISTS admins (id SERIAL PRIMARY KEY, name VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL UNIQUE, password VARCHAR(255) NOT NULL, role VARCHAR(50) DEFAULT 'superadmin', status VARCHAR(50) DEFAULT 'active', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+                CREATE TABLE IF NOT EXISTS courses (id SERIAL PRIMARY KEY, course_name VARCHAR(255) NOT NULL, short_name VARCHAR(50) NOT NULL, description TEXT, duration VARCHAR(100), fee DECIMAL(10,2) NOT NULL DEFAULT 0.00, admission_fee DECIMAL(10,2) NOT NULL DEFAULT 0.00, discount DECIMAL(10,2) NOT NULL DEFAULT 0.00, final_fee DECIMAL(10,2) NOT NULL DEFAULT 0.00, eligibility VARCHAR(255) DEFAULT '10th / 12th Pass', certificate_available INT DEFAULT 1, course_image VARCHAR(255) DEFAULT 'adca.svg', status VARCHAR(50) DEFAULT 'active', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+                CREATE TABLE IF NOT EXISTS subjects (id SERIAL PRIMARY KEY, course_id INT NOT NULL, subject_name VARCHAR(255) NOT NULL, subject_code VARCHAR(100), description TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+                CREATE TABLE IF NOT EXISTS students (id SERIAL PRIMARY KEY, roll_number VARCHAR(100) NOT NULL UNIQUE, name VARCHAR(255) NOT NULL, father_name VARCHAR(255), email VARCHAR(255), mobile VARCHAR(50), phone VARCHAR(50), password VARCHAR(255) NOT NULL, course_id INT NOT NULL DEFAULT 1, admission_date DATE, status VARCHAR(50) DEFAULT 'active', profile_image VARCHAR(255) DEFAULT 'default_avatar.svg', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+                CREATE TABLE IF NOT EXISTS notes (id SERIAL PRIMARY KEY, course_id INT NOT NULL DEFAULT 1, subject_id INT NOT NULL DEFAULT 1, chapter_name VARCHAR(255), title VARCHAR(255) NOT NULL, file_path VARCHAR(255), file_type VARCHAR(50) DEFAULT 'pdf', file_size VARCHAR(50) DEFAULT '1.2 MB', description TEXT, content TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+                CREATE TABLE IF NOT EXISTS exams (id SERIAL PRIMARY KEY, course_id INT NOT NULL DEFAULT 1, subject_id INT, exam_title VARCHAR(255) DEFAULT '', title VARCHAR(255) DEFAULT '', description TEXT, total_questions INT NOT NULL DEFAULT 10, duration_minutes INT NOT NULL DEFAULT 15, max_marks INT NOT NULL DEFAULT 50, passing_percentage INT NOT NULL DEFAULT 40, status VARCHAR(50) DEFAULT 'active', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+                CREATE TABLE IF NOT EXISTS questions (id SERIAL PRIMARY KEY, exam_id INT NOT NULL DEFAULT 1, question_text TEXT NOT NULL, option_a TEXT NOT NULL, option_b TEXT NOT NULL, option_c TEXT NOT NULL, option_d TEXT NOT NULL, correct_option VARCHAR(10) NOT NULL, marks INT NOT NULL DEFAULT 5, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+                CREATE TABLE IF NOT EXISTS exam_attempts (id SERIAL PRIMARY KEY, student_id INT, exam_id INT NOT NULL DEFAULT 1, roll_number VARCHAR(100), student_name VARCHAR(255), course_name VARCHAR(255), start_time TIMESTAMP NOT NULL, end_time TIMESTAMP, total_questions INT NOT NULL DEFAULT 0, attempted INT NOT NULL DEFAULT 0, correct_answers INT NOT NULL DEFAULT 0, wrong_answers INT NOT NULL DEFAULT 0, unattempted INT NOT NULL DEFAULT 0, total_marks INT NOT NULL DEFAULT 0, obtained_marks INT NOT NULL DEFAULT 0, percentage DECIMAL(5,2) NOT NULL DEFAULT 0.00, grade VARCHAR(10) DEFAULT 'F', status VARCHAR(50) DEFAULT 'in_progress', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+                CREATE TABLE IF NOT EXISTS exam_answers (id SERIAL PRIMARY KEY, attempt_id INT NOT NULL, question_id INT NOT NULL, selected_option VARCHAR(10), is_correct INT DEFAULT 0, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+                CREATE TABLE IF NOT EXISTS results (id SERIAL PRIMARY KEY, attempt_id INT NOT NULL UNIQUE, student_id INT, exam_id INT NOT NULL, roll_number VARCHAR(100) NOT NULL, total_marks INT NOT NULL, obtained_marks INT NOT NULL, percentage DECIMAL(5,2) NOT NULL, grade VARCHAR(10) NOT NULL, pass_status VARCHAR(50) NOT NULL, date DATE NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+                CREATE TABLE IF NOT EXISTS certificates (id SERIAL PRIMARY KEY, certificate_number VARCHAR(100) NOT NULL UNIQUE, student_id INT NOT NULL DEFAULT 0, course_id INT NOT NULL DEFAULT 0, result_id INT NOT NULL DEFAULT 0, student_name VARCHAR(255), roll_number VARCHAR(100), course_name VARCHAR(255), duration VARCHAR(100), percentage DECIMAL(5,2) NOT NULL DEFAULT 0.00, grade VARCHAR(10) NOT NULL DEFAULT 'A', issue_date DATE, status VARCHAR(50) DEFAULT 'active', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+                CREATE TABLE IF NOT EXISTS contact_messages (id SERIAL PRIMARY KEY, name VARCHAR(255) NOT NULL, email VARCHAR(255), phone VARCHAR(50), subject VARCHAR(255), message TEXT NOT NULL, status VARCHAR(50) DEFAULT 'unread', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+                CREATE TABLE IF NOT EXISTS typing_results (id SERIAL PRIMARY KEY, candidate_name VARCHAR(255) NOT NULL, phone VARCHAR(50), duration_mins INT DEFAULT 1, net_wpm INT DEFAULT 0, gross_wpm INT DEFAULT 0, accuracy DECIMAL(5,2) DEFAULT 100.00, mistakes INT DEFAULT 0, grade VARCHAR(10) DEFAULT 'A', certificate_no VARCHAR(100) NOT NULL UNIQUE, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+            ");
+            
+            $sc = $pdo->query("SELECT COUNT(*) FROM settings")->fetchColumn();
+            if ($sc == 0) {
+                $defaults = [
+                    'institute_name' => 'Micro Group of Computer Institute',
+                    'short_name' => 'MGI',
+                    'tagline' => 'Learn • Practice • Test • Achieve',
+                    'manager_name' => 'DK Singh',
+                    'location' => 'Bhoopganj Payagpur',
+                    'branch_address' => 'Main Market, Bhoopganj Payagpur / Fukganj, Uttar Pradesh',
+                    'phone' => '+91 9792686570',
+                    'email' => 'Deep2180411008@gmail.com',
+                    'alt_email' => 'support@microgroupinstitute.com',
+                    'default_passing_percentage' => '40',
+                    'certificate_prefix' => 'MGI-2026-',
+                    'hero_title' => 'Empowering Students With Digital Skills',
+                    'hero_subtitle' => 'Learn computer skills with quality education, digital study material, online examinations and recognized course completion certificates.'
+                ];
+                $st = $pdo->prepare("INSERT INTO settings (key_name, key_value) VALUES (?, ?)");
+                foreach ($defaults as $k => $v) {
+                    $st->execute([$k, $v]);
+                }
+            }
+            
+            $ac = $pdo->query("SELECT COUNT(*) FROM admins")->fetchColumn();
+            if ($ac == 0) {
+                $hash = password_hash('Verna@325901', PASSWORD_BCRYPT);
+                $pdo->prepare("INSERT INTO admins (name, email, password, role, status) VALUES ('DK Singh (Director/Manager)', 'Deep2180411008@gmail.com', ?, 'superadmin', 'active')")->execute([$hash]);
+            }
+        } catch (Exception $e) {
+            $pdo = null;
+        }
+    }
+}
+
 // 1. Try MySQL Connection (Local XAMPP or Cloud MySQL / TiDB / Aiven / PlanetScale)
 $db_host = getenv('DB_HOST') ?: (getenv('MYSQLHOST') ?: '127.0.0.1');
 $db_name = getenv('DB_NAME') ?: (getenv('MYSQLDATABASE') ?: 'micro_group_institute');

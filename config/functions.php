@@ -18,8 +18,8 @@ function update_setting($key, $value) {
     global $pdo;
     try {
         $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
-        if ($driver === 'sqlite') {
-            $stmt = $pdo->prepare("INSERT INTO settings (key_name, key_value) VALUES (?, ?) ON CONFLICT(key_name) DO UPDATE SET key_value=excluded.key_value");
+        if ($driver === 'sqlite' || $driver === 'pgsql') {
+            $stmt = $pdo->prepare("INSERT INTO settings (key_name, key_value) VALUES (?, ?) ON CONFLICT(key_name) DO UPDATE SET key_value=EXCLUDED.key_value");
         } else {
             $stmt = $pdo->prepare("INSERT INTO settings (key_name, key_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE key_value = VALUES(key_value)");
         }
