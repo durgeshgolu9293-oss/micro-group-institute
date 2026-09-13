@@ -22,8 +22,8 @@ INSERT INTO `settings` (`key_name`, `key_value`) VALUES
 ('manager_name', 'DK Singh'),
 ('location', 'Bhoopganj Payagpur'),
 ('branch_address', 'Main Market, Bhoopganj Payagpur / Fukganj, Uttar Pradesh'),
-('phone', '+91 98765 43210'),
-('email', 'info@microgroupinstitute.com'),
+('phone', '+91 9792686570'),
+('email', 'Deep2180411008@gmail.com'),
 ('alt_email', 'support@microgroupinstitute.com'),
 ('default_passing_percentage', '40'),
 ('certificate_prefix', 'MGI-2026-'),
@@ -44,9 +44,9 @@ CREATE TABLE IF NOT EXISTS `admins` (
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Seed Admin (admin@microgroup.com / admin123)
+-- Seed Admin (Deep2180411008@gmail.com / Verna@325901)
 INSERT INTO `admins` (`id`, `name`, `email`, `password`, `role`, `status`) VALUES
-(1, 'DK Singh (Director/Manager)', 'admin@microgroup.com', '$2y$10$wK1VqJz0H9GzE7jM1jU18.Q69H.K3oQpE0FzOq6n0sJzTfR2V1G2W', 'superadmin', 'active')
+(1, 'DK Singh (Director/Manager)', 'Deep2180411008@gmail.com', '$2y$10$ax34S6hAmGlkVINsTqJQ4.eiVbfPMpbCup59MaEU.6nOn1klDTyXC', 'superadmin', 'active')
 ON DUPLICATE KEY UPDATE `email`=VALUES(`email`);
 
 -- --------------------------------------------------------
