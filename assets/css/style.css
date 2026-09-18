@@ -601,3 +601,50 @@ h1, h2, h3, h4, h5, h6 {
     background-color: #0F233E !important;
     color: #ffffff !important;
 }
+
+/* Deep Mobile Responsiveness Fixes */
+@media (max-width: 991px) {
+  .navbar-collapse {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 12px;
+    padding: 15px;
+    margin-top: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  }
+}
+@media (max-width: 768px) {
+  .hero-title { font-size: 2rem !important; }
+  .stats-val { font-size: 1.4rem; }
+  .stats-card { flex-direction: column; text-align: center; gap: 8px; padding: 15px; }
+  .section-title { font-size: 1.8rem; }
+  .navbar-brand-logo .brand-title { font-size: 1.2rem; }
+  .navbar-brand-logo .brand-icon-box { width: 36px; height: 36px; font-size: 1.2rem; }
+  .top-bar { font-size: 0.75rem; text-align: center; justify-content: center; }
+  .top-bar .d-flex { flex-direction: column; gap: 5px !important; align-items: center; justify-content: center; width: 100%; }
+  .course-card-header { padding: 15px; }
+  .footer-mgi { padding: 40px 0 20px; }
+  .footer-bottom { text-align: center; }
+  .manager-quote-card { padding: 20px; text-align: center; }
+  .manager-avatar-box { margin: 0 auto 15px; }
+}
+
+@media (max-width: 576px) {
+  .hero-title { font-size: 1.7rem !important; }
+  .hero-subtitle { font-size: 0.95rem; }
+  .course-pricing-box { flex-direction: column; align-items: center; text-align: center; }
+  .fee-final { font-size: 1.2rem; }
+  .top-bar { display: none; }
+}
+
+/* Fix table overflows across all pages */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure images never overflow */
+img {
+  max-width: 100%;
+  height: auto;
+}
