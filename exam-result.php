@@ -63,11 +63,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $existingRes = $resChk->fetch();
 
         if ($existingRes) {
-            $resStmt = $pdo->prepare("UPDATE results SET total_marks = ?, obtained_marks = ?, percentage = ?, grade = ?, pass_status = ?, date = CURDATE() WHERE attempt_id = ?");
+            $resStmt = $pdo->prepare("UPDATE results SET total_marks = ?, obtained_marks = ?, percentage = ?, grade = ?, pass_status = ?, date = CURRENT_DATE WHERE attempt_id = ?");
             $resStmt->execute([$totalMarks, $obtainedMarks, $percentage, $grade, $passStatus, $attempt_id]);
             $result_id = $existingRes['id'];
         } else {
-            $resStmt = $pdo->prepare("INSERT INTO results (attempt_id, student_id, exam_id, roll_number, total_marks, obtained_marks, percentage, grade, pass_status, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE())");
+            $resStmt = $pdo->prepare("INSERT INTO results (attempt_id, student_id, exam_id, roll_number, total_marks, obtained_marks, percentage, grade, pass_status, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_DATE)");
             $resStmt->execute([$attempt_id, $attempt['student_id'], $attempt['exam_id'], $attempt['roll_number'], $totalMarks, $obtainedMarks, $percentage, $grade, $passStatus]);
             $result_id = $pdo->lastInsertId() ?: 1;
         }
@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $cRow = $cDetails->fetch();
                 $courseDuration = $cRow ? $cRow['duration'] : '12 Months';
 
-                $cIns = $pdo->prepare("INSERT INTO certificates (certificate_number, student_id, course_id, result_id, student_name, roll_number, course_name, duration, percentage, grade, issue_date, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE(), 'active')");
+                $cIns = $pdo->prepare("INSERT INTO certificates (certificate_number, student_id, course_id, result_id, student_name, roll_number, course_name, duration, percentage, grade, issue_date, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_DATE, 'active')");
                 $cIns->execute([
                     $certNumber,
                     $attempt['student_id'] ?: 0,

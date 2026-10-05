@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_cert'])) {
     $cStmt->execute([$course_id]);
     $cRow = $cStmt->fetch();
 
-    $ins = $pdo->prepare("INSERT INTO certificates (certificate_number, student_id, course_id, result_id, student_name, roll_number, course_name, duration, percentage, grade, issue_date, status) VALUES (?, 0, ?, 0, ?, ?, ?, ?, ?, ?, CURDATE(), 'active')");
+    $ins = $pdo->prepare("INSERT INTO certificates (certificate_number, student_id, course_id, result_id, student_name, roll_number, course_name, duration, percentage, grade, issue_date, status) VALUES (?, 0, ?, 0, ?, ?, ?, ?, ?, ?, CURRENT_DATE, 'active')");
     $ins->execute([$cert_number, $course_id, $student_name, $roll_number, $cRow['course_name'], $cRow['duration'], $percentage, $grade]);
     set_flash_message('success', "Certificate {$cert_number} generated successfully!");
     header('Location: ' . BASE_URL . '/admin/certificates.php');

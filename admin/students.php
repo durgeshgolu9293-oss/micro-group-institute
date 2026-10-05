@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         set_flash_message('success', 'Student record updated.');
     } else {
         $hash = password_hash($password ?: 'student123', PASSWORD_BCRYPT);
-        $stmt = $pdo->prepare("INSERT INTO students (name, email, mobile, course_id, roll_number, password, admission_date, status) VALUES (?, ?, ?, ?, ?, ?, CURDATE(), ?)");
+        $stmt = $pdo->prepare("INSERT INTO students (name, email, mobile, course_id, roll_number, password, admission_date, status) VALUES (?, ?, ?, ?, ?, ?, CURRENT_DATE, ?)");
         $stmt->execute([$name, $email, $mobile, $course_id, $roll_number, $hash, $status]);
         set_flash_message('success', 'Student enrolled successfully.');
     }
