@@ -289,6 +289,43 @@ function confirmSubmission() {
     const modal = new bootstrap.Modal(document.getElementById('submitModal'));
     modal.show();
 }
+
+// -----------------------------------------------------
+// ANTI-CHEAT SECURITY MEASURES
+// -----------------------------------------------------
+
+// 1. Disable Right Click
+document.addEventListener('contextmenu', event => event.preventDefault());
+
+// 2. Disable Copy, Cut, Paste
+document.addEventListener('copy', event => event.preventDefault());
+document.addEventListener('cut', event => event.preventDefault());
+document.addEventListener('paste', event => event.preventDefault());
+
+// 3. Prevent Tab Switching (Visibility API)
+let tabSwitchCount = 0;
+document.addEventListener("visibilitychange", function() {
+    if (document.hidden) {
+        tabSwitchCount++;
+        alert("⚠️ चेतावनी! एग्जाम के दौरान पेज बदलना (Tab Switch करना) या Google खोलना सख्त मना है।\n\nWarning " + tabSwitchCount + " of 3.");
+        
+        if (tabSwitchCount >= 3) {
+            alert("❌ EXAM CANCELLED! आपने 3 बार नियम तोड़े हैं। आपका एग्जाम अपने-आप सबमिट किया जा रहा है।");
+            document.getElementById('examForm').submit();
+        }
+    }
+});
+
+// 4. Disable Keyboard Shortcuts (Ctrl+C, Ctrl+V, F12, PrintScreen)
+document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && (e.key === 'c' || e.key === 'v' || e.key === 'x' || e.key === 'p' || e.key === 's')) {
+        e.preventDefault();
+        alert("⚠️ Keyboard shortcuts are disabled during the exam!");
+    }
+    if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+        e.preventDefault(); 
+    }
+});
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="<?= BASE_URL ?>/assets/js/exam.js"></script>
