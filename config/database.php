@@ -10,7 +10,7 @@ $pdo = null;
 $db_url = getenv('DATABASE_URL');
 if ($db_url) {
     $dbopts = parse_url($db_url);
-    if (isset($dbopts['scheme']) && $dbopts['scheme'] === 'postgres') {
+    if (isset($dbopts['scheme']) && ($dbopts['scheme'] === 'postgres' || $dbopts['scheme'] === 'postgresql')) {
         $pg_host = $dbopts["host"] ?? '';
         $pg_port = $dbopts["port"] ?? 5432;
         $pg_user = $dbopts["user"] ?? '';
