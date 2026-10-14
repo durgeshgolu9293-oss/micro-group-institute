@@ -124,8 +124,8 @@ $wa_link = $is_dummy_phone ? BASE_URL . '/contact.php' : 'https://wa.me/' . (str
     <i class="bi <?= $is_dummy_phone ? 'bi-chat-dots-fill' : 'bi-whatsapp' ?>"></i>
 </a>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Offline-Ready Bootstrap JS -->
+<script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
 <script src="<?= BASE_URL ?>/assets/js/main.js"></script>
 <?php if (isset($extra_js)) echo $extra_js; ?>
 </body>

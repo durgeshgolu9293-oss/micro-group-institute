@@ -16,8 +16,8 @@ $notes = $notesStmt->fetchAll();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Notes - Micro Group Student Portal</title>
     
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/bootstrap-icons.min.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/style.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin.css">
 </head>
@@ -105,7 +105,7 @@ $notes = $notesStmt->fetchAll();
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
 <script>
 function openStudentNoteModal(idx) {
     document.getElementById('stNoteTitle').innerText = document.getElementById(`st-modal-title-${idx}`).innerText;

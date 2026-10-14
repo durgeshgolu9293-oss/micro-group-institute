@@ -18,9 +18,9 @@ $currPage = basename($_SERVER['PHP_SELF'], '.php');
     <title><?= isset($page_title) ? htmlspecialchars($page_title) . ' - ' : '' ?><?= htmlspecialchars($site_name) ?></title>
     <meta name="description" content="Micro Group of Computer Institute - Quality digital education, ADCA, CCC, DCA, Tally Prime courses in <?= htmlspecialchars($location) ?>. Manager: <?= htmlspecialchars($manager_name) ?>">
     
-    <!-- Google Fonts & Bootstrap Icons & Font Awesome -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Offline-Ready Bootstrap & Bootstrap Icons -->
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     
