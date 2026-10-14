@@ -76,27 +76,32 @@ if ($db_url) {
     }
 }
 
-// 1. Try MySQL Connection (Local XAMPP or Cloud MySQL / TiDB / Aiven / PlanetScale)
+// 1. Try MySQL Connection if MySQL is running (Fast Socket Probe)
 $db_host = getenv('DB_HOST') ?: (getenv('MYSQLHOST') ?: '127.0.0.1');
 $db_name = getenv('DB_NAME') ?: (getenv('MYSQLDATABASE') ?: 'micro_group_institute');
 $db_user = getenv('DB_USER') ?: (getenv('MYSQLUSER') ?: 'root');
 $db_pass = getenv('DB_PASS') !== false ? getenv('DB_PASS') : (getenv('MYSQLPASSWORD') !== false ? getenv('MYSQLPASSWORD') : '');
-$db_port = getenv('DB_PORT') ?: (getenv('MYSQLPORT') ?: null);
+$db_port = getenv('DB_PORT') ?: (getenv('MYSQLPORT') ?: 3306);
 
-$ports = $db_port ? [(int)$db_port] : [3307, 3306, 3308];
+// Fast check: Only attempt MySQL PDO if port is actively listening (prevents 6-second localhost lag)
+$is_mysql_live = false;
+$socket = @fsockopen($db_host, (int)$db_port, $errno, $errstr, 0.15);
+if (is_resource($socket)) {
+    fclose($socket);
+    $is_mysql_live = true;
+}
 
-foreach ($ports as $port) {
+if ($is_mysql_live) {
     try {
-        $dsn = "mysql:host={$db_host};port={$port};dbname={$db_name};charset=utf8mb4";
+        $dsn = "mysql:host={$db_host};port={$db_port};dbname={$db_name};charset=utf8mb4";
         $pdo = new PDO($dsn, $db_user, $db_pass, [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES => false,
-            PDO::ATTR_TIMEOUT => 2
+            PDO::ATTR_TIMEOUT => 1
         ]);
-        break; // Connected to MySQL successfully
     } catch (Exception $e) {
-        continue;
+        $pdo = null;
     }
 }
 
