@@ -14,9 +14,8 @@ $currFile = basename($_SERVER['PHP_SELF'], '.php');
     </a>
 
     <div class="p-3 text-center border-bottom border-secondary border-opacity-25">
-        <div class="rounded-circle bg-primary bg-opacity-25 text-info d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 54px; height: 54px; font-size: 1.6rem;">
-            <i class="bi bi-person-circle"></i>
-        </div>
+        <?php $avatarUrl = get_student_avatar_url($student); ?>
+        <img src="<?= $avatarUrl ?>" alt="Student Photo" class="rounded-circle border border-2 border-warning shadow-sm mx-auto mb-2" style="width: 58px; height: 58px; object-fit: cover; background: #fff;">
         <h6 class="text-white mb-0"><?= htmlspecialchars($student['name'] ?? 'Student') ?></h6>
         <span class="badge bg-secondary bg-opacity-50 text-light mt-1"><?= htmlspecialchars($student['course_code'] ?? 'Course') ?></span>
     </div>
@@ -58,8 +57,14 @@ $currFile = basename($_SERVER['PHP_SELF'], '.php');
             </a>
         </li>
         <li>
-            <a href="<?= BASE_URL ?>/student/id-card.php" class="sidebar-link text-warning <?= ($currFile == 'id-card') ? 'active' : '' ?>">
-                <i class="bi bi-person-badge-fill"></i> Download ID Card <span class="badge bg-danger ms-1" style="font-size: 0.65rem;">NEW</span>
+            <?php $idCardUnlocked = is_student_profile_complete($student); ?>
+            <a href="<?= BASE_URL ?>/student/id-card.php" class="sidebar-link <?= ($currFile == 'id-card') ? 'active' : '' ?>">
+                <i class="bi bi-person-badge-fill <?= $idCardUnlocked ? 'text-warning' : 'text-light' ?>"></i> Student ID Card 
+                <?php if ($idCardUnlocked): ?>
+                    <span class="badge bg-success ms-auto" style="font-size: 0.65rem;">ACTIVE</span>
+                <?php else: ?>
+                    <span class="badge bg-warning text-dark ms-auto" style="font-size: 0.65rem;">LOCKED</span>
+                <?php endif; ?>
             </a>
         </li>
 

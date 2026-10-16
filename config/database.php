@@ -30,7 +30,7 @@ if ($db_url) {
                 CREATE TABLE IF NOT EXISTS admins (id SERIAL PRIMARY KEY, name VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL UNIQUE, password VARCHAR(255) NOT NULL, role VARCHAR(50) DEFAULT 'superadmin', status VARCHAR(50) DEFAULT 'active', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
                 CREATE TABLE IF NOT EXISTS courses (id SERIAL PRIMARY KEY, course_name VARCHAR(255) NOT NULL, short_name VARCHAR(50) NOT NULL, description TEXT, duration VARCHAR(100), fee DECIMAL(10,2) NOT NULL DEFAULT 0.00, admission_fee DECIMAL(10,2) NOT NULL DEFAULT 0.00, discount DECIMAL(10,2) NOT NULL DEFAULT 0.00, final_fee DECIMAL(10,2) NOT NULL DEFAULT 0.00, eligibility VARCHAR(255) DEFAULT '10th / 12th Pass', certificate_available INT DEFAULT 1, course_image VARCHAR(255) DEFAULT 'adca.svg', status VARCHAR(50) DEFAULT 'active', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
                 CREATE TABLE IF NOT EXISTS subjects (id SERIAL PRIMARY KEY, course_id INT NOT NULL, subject_name VARCHAR(255) NOT NULL, subject_code VARCHAR(100), description TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
-                CREATE TABLE IF NOT EXISTS students (id SERIAL PRIMARY KEY, roll_number VARCHAR(100) NOT NULL UNIQUE, name VARCHAR(255) NOT NULL, father_name VARCHAR(255), email VARCHAR(255), mobile VARCHAR(50), phone VARCHAR(50), password VARCHAR(255) NOT NULL, course_id INT NOT NULL DEFAULT 1, admission_date DATE, status VARCHAR(50) DEFAULT 'active', profile_image VARCHAR(255) DEFAULT 'default_avatar.svg', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+                CREATE TABLE IF NOT EXISTS students (id SERIAL PRIMARY KEY, roll_number VARCHAR(100) NOT NULL UNIQUE, name VARCHAR(255) NOT NULL, father_name VARCHAR(255), email VARCHAR(255), mobile VARCHAR(50), phone VARCHAR(50), dob VARCHAR(50), gender VARCHAR(20), blood_group VARCHAR(10), address TEXT, emergency_contact VARCHAR(50), password VARCHAR(255) NOT NULL, course_id INT NOT NULL DEFAULT 1, admission_date DATE, status VARCHAR(50) DEFAULT 'active', profile_image VARCHAR(255) DEFAULT 'default_avatar.svg', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
                 CREATE TABLE IF NOT EXISTS notes (id SERIAL PRIMARY KEY, course_id INT NOT NULL DEFAULT 1, subject_id INT NOT NULL DEFAULT 1, chapter_name VARCHAR(255), title VARCHAR(255) NOT NULL, file_path VARCHAR(255), file_type VARCHAR(50) DEFAULT 'pdf', file_size VARCHAR(50) DEFAULT '1.2 MB', description TEXT, content TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
                 CREATE TABLE IF NOT EXISTS exams (id SERIAL PRIMARY KEY, course_id INT NOT NULL DEFAULT 1, subject_id INT, exam_title VARCHAR(255) DEFAULT '', title VARCHAR(255) DEFAULT '', description TEXT, total_questions INT NOT NULL DEFAULT 10, duration_minutes INT NOT NULL DEFAULT 15, max_marks INT NOT NULL DEFAULT 50, passing_percentage INT NOT NULL DEFAULT 40, status VARCHAR(50) DEFAULT 'active', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
                 CREATE TABLE IF NOT EXISTS questions (id SERIAL PRIMARY KEY, exam_id INT NOT NULL DEFAULT 1, question_text TEXT NOT NULL, option_a TEXT NOT NULL, option_b TEXT NOT NULL, option_c TEXT NOT NULL, option_d TEXT NOT NULL, correct_option VARCHAR(10) NOT NULL, marks INT NOT NULL DEFAULT 5, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
@@ -173,6 +173,11 @@ if (!$pdo) {
                 email TEXT,
                 mobile TEXT,
                 phone TEXT,
+                dob TEXT,
+                gender TEXT,
+                blood_group TEXT,
+                address TEXT,
+                emergency_contact TEXT,
                 password TEXT NOT NULL,
                 course_id INTEGER NOT NULL DEFAULT 1,
                 admission_date DATE,
@@ -335,6 +340,24 @@ if (!$pdo) {
             if (!in_array('mobile', $cols)) {
                 $pdo->exec("ALTER TABLE students ADD COLUMN mobile TEXT DEFAULT ''");
                 $pdo->exec("UPDATE students SET mobile = phone WHERE mobile = '' OR mobile IS NULL");
+            }
+            if (!in_array('father_name', $cols)) {
+                $pdo->exec("ALTER TABLE students ADD COLUMN father_name TEXT DEFAULT ''");
+            }
+            if (!in_array('dob', $cols)) {
+                $pdo->exec("ALTER TABLE students ADD COLUMN dob TEXT DEFAULT ''");
+            }
+            if (!in_array('gender', $cols)) {
+                $pdo->exec("ALTER TABLE students ADD COLUMN gender TEXT DEFAULT ''");
+            }
+            if (!in_array('blood_group', $cols)) {
+                $pdo->exec("ALTER TABLE students ADD COLUMN blood_group TEXT DEFAULT ''");
+            }
+            if (!in_array('address', $cols)) {
+                $pdo->exec("ALTER TABLE students ADD COLUMN address TEXT DEFAULT ''");
+            }
+            if (!in_array('emergency_contact', $cols)) {
+                $pdo->exec("ALTER TABLE students ADD COLUMN emergency_contact TEXT DEFAULT ''");
             }
         } catch (Exception $e) {}
 

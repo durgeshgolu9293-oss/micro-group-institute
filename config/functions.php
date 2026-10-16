@@ -133,3 +133,68 @@ function get_logged_admin() {
     $stmt->execute([$_SESSION['admin_id']]);
     return $stmt->fetch();
 }
+
+// Student Profile & ID Card Helpers
+function get_student_avatar_url($student) {
+    if (!$student) return BASE_URL . '/assets/images/default_avatar.svg';
+    $img = $student['profile_image'] ?? '';
+    if (!empty($img) && $img !== 'default_avatar.svg') {
+        $path = __DIR__ . '/../assets/uploads/students/' . $img;
+        if (file_exists($path)) {
+            return BASE_URL . '/assets/uploads/students/' . htmlspecialchars($img);
+        }
+    }
+    return BASE_URL . '/assets/images/default_avatar.svg';
+}
+
+function get_student_profile_completion($student) {
+    if (!$student) return ['percentage' => 0, 'is_complete' => false, 'missing' => [], 'filled_count' => 0, 'total_count' => 6];
+    
+    $required = [
+        'name' => 'विद्यार्थी का नाम (Full Name)',
+        'father_name' => 'पिता का नाम (Father\'s Name)',
+        'mobile' => 'मोबाइल नंबर (Mobile Number)',
+        'dob' => 'जन्मतिथि (Date of Birth)',
+        'address' => 'स्थायी पता (Full Address)',
+        'profile_image' => 'पासपोर्ट साइज फोटो (Passport Photo)'
+    ];
+
+    $missing = [];
+    $total = count($required);
+    $filled = 0;
+
+    foreach ($required as $field => $label) {
+        if ($field === 'profile_image') {
+            $img = $student['profile_image'] ?? '';
+            $hasPhoto = (!empty($img) && $img !== 'default_avatar.svg');
+            if ($hasPhoto) {
+                $filled++;
+            } else {
+                $missing[$field] = $label;
+            }
+        } else {
+            $val = trim((string)($student[$field] ?? ''));
+            if (!empty($val)) {
+                $filled++;
+            } else {
+                $missing[$field] = $label;
+            }
+        }
+    }
+
+    $percentage = (int)round(($filled / $total) * 100);
+    $is_complete = ($percentage === 100);
+
+    return [
+        'percentage' => $percentage,
+        'is_complete' => $is_complete,
+        'missing' => $missing,
+        'filled_count' => $filled,
+        'total_count' => $total
+    ];
+}
+
+function is_student_profile_complete($student) {
+    $info = get_student_profile_completion($student);
+    return $info['is_complete'];
+}

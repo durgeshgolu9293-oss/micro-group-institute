@@ -80,14 +80,54 @@ $course = $courseStmt->fetch();
         <main class="portal-content">
             <?php display_flash_message(); ?>
 
+            <?php 
+            $completion = get_student_profile_completion($student);
+            $dashAvatarUrl = get_student_avatar_url($student);
+            ?>
+
+            <!-- Profile & ID Card Status Quick Notice -->
+            <?php if (!$completion['is_complete']): ?>
+                <div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white border-start border-4 border-warning">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="rounded-circle bg-warning bg-opacity-10 text-warning p-3 fs-3">
+                                <i class="bi bi-shield-lock-fill"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1 text-dark">आपका स्टूडेंट ID कार्ड अनलॉक होने की प्रतीक्षा में है (<?= $completion['percentage'] ?>% Completed)</h6>
+                                <p class="small text-muted mb-0">कृपया अपनी पासपोर्ट फोटो और विवरण भरें ताकि आधिकारिक आईडी कार्ड सक्रिय हो सके।</p>
+                            </div>
+                        </div>
+                        <a href="<?= BASE_URL ?>/student/profile.php" class="btn btn-warning btn-sm fw-bold px-4">
+                            <i class="bi bi-pencil-square me-1"></i> प्रोफ़ाइल पूरी करें (Complete Now)
+                        </a>
+                    </div>
+                </div>
+            <?php else: ?>
+                <div class="card border-0 rounded-4 shadow-sm p-3 mb-4 bg-white border-start border-4 border-success">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="rounded-circle bg-success bg-opacity-10 text-success p-3 fs-3">
+                                <i class="bi bi-person-badge-fill"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1 text-dark">आधिकारिक स्टूडेंट आईडी कार्ड सक्रिय है (ID Card Active)</h6>
+                                <p class="small text-muted mb-0">आपका डिजिटल पहचान पत्र (CR-80 Format) डाउनलोड व प्रिंट के लिए तैयार है।</p>
+                            </div>
+                        </div>
+                        <a href="<?= BASE_URL ?>/student/id-card.php" class="btn btn-success btn-sm fw-bold px-4">
+                            <i class="bi bi-printer-fill me-1"></i> प्रिंट / डाउनलोड आईडी कार्ड
+                        </a>
+                    </div>
+                </div>
+            <?php endif; ?>
+
             <!-- Student Profile Card Banner -->
             <div class="card border-0 rounded-4 shadow-sm p-4 text-white mb-4" style="background: linear-gradient(135deg, #09172A 0%, #0369A1 100%);">
                 <div class="row align-items-center g-4">
                     <div class="col-md-8">
                         <div class="d-flex align-items-center gap-3 mb-2">
-                            <div class="rounded-circle bg-white bg-opacity-15 p-3 fs-2 text-info">
-                                <i class="bi bi-person-fill"></i>
-                            </div>
+                            <img src="<?= $dashAvatarUrl ?>" alt="Student Photo" class="rounded-circle border border-3 border-warning shadow" style="width: 64px; height: 64px; object-fit: cover; background: #fff;">
                             <div>
                                 <h4 class="fw-bold mb-0 text-white"><?= htmlspecialchars($student['name']) ?></h4>
                                 <span class="text-info small">Roll: <strong><?= htmlspecialchars($student['roll_number']) ?></strong> | Enrolled Course: <strong><?= htmlspecialchars($student['course_name'] ?? 'Computer Course') ?></strong></span>
@@ -95,20 +135,21 @@ $course = $courseStmt->fetch();
                         </div>
                         <div class="d-flex flex-wrap gap-4 text-light small mt-3">
                             <div><i class="bi bi-envelope text-warning me-1"></i><?= htmlspecialchars($student['email']) ?></div>
-                            <div><i class="bi bi-telephone text-success me-1"></i><?= htmlspecialchars($student['mobile']) ?></div>
-                            <div><i class="bi bi-calendar-check text-info me-1"></i>Admission: <?= date('d M, Y', strtotime($student['admission_date'])) ?></div>
+                            <div><i class="bi bi-telephone text-success me-1"></i><?= htmlspecialchars($student['mobile'] ?: $student['phone'] ?: 'N/A') ?></div>
+                            <div><i class="bi bi-calendar-check text-info me-1"></i>Admission: <?= !empty($student['admission_date']) ? date('d M, Y', strtotime($student['admission_date'])) : date('d M, Y') ?></div>
                         </div>
                     </div>
                     <div class="col-md-4 text-md-end">
-                        <?php if ($cert && $cert['status'] === 'active'): ?>
-                            <a href="<?= BASE_URL ?>/certificate.php?cert_no=<?= urlencode($cert['certificate_number']) ?>" target="_blank" class="btn btn-warning fw-bold px-3 py-2 shadow">
-                                <i class="bi bi-award-fill me-1"></i> View Certificate
+                        <div class="d-flex flex-column flex-md-row justify-content-md-end gap-2">
+                            <a href="<?= BASE_URL ?>/student/id-card.php" class="btn btn-warning fw-bold px-3 py-2 shadow-sm">
+                                <i class="bi bi-person-badge-fill me-1"></i> Student ID Card
                             </a>
-                        <?php else: ?>
-                            <a href="<?= BASE_URL ?>/student/exams.php" class="btn btn-info text-white fw-bold px-3 py-2 shadow">
-                                <i class="bi bi-pencil-square me-1"></i> Start Course Exam
-                            </a>
-                        <?php endif; ?>
+                            <?php if ($cert && $cert['status'] === 'active'): ?>
+                                <a href="<?= BASE_URL ?>/certificate.php?cert_no=<?= urlencode($cert['certificate_number']) ?>" target="_blank" class="btn btn-light text-primary fw-bold px-3 py-2 shadow-sm">
+                                    <i class="bi bi-award-fill me-1"></i> Certificate
+                                </a>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </div>
