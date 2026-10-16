@@ -41,6 +41,20 @@ if ($db_url) {
                 CREATE TABLE IF NOT EXISTS contact_messages (id SERIAL PRIMARY KEY, name VARCHAR(255) NOT NULL, email VARCHAR(255), phone VARCHAR(50), subject VARCHAR(255), message TEXT NOT NULL, status VARCHAR(50) DEFAULT 'unread', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
                 CREATE TABLE IF NOT EXISTS typing_results (id SERIAL PRIMARY KEY, candidate_name VARCHAR(255) NOT NULL, phone VARCHAR(50), duration_mins INT DEFAULT 1, net_wpm INT DEFAULT 0, gross_wpm INT DEFAULT 0, accuracy DECIMAL(5,2) DEFAULT 100.00, mistakes INT DEFAULT 0, grade VARCHAR(10) DEFAULT 'A', certificate_no VARCHAR(100) NOT NULL UNIQUE, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
             ");
+
+            // PostgreSQL safe column migrations for existing tables
+            try {
+                $pdo->exec("
+                    ALTER TABLE students ADD COLUMN IF NOT EXISTS father_name VARCHAR(255);
+                    ALTER TABLE students ADD COLUMN IF NOT EXISTS dob VARCHAR(50);
+                    ALTER TABLE students ADD COLUMN IF NOT EXISTS gender VARCHAR(20) DEFAULT 'Male';
+                    ALTER TABLE students ADD COLUMN IF NOT EXISTS blood_group VARCHAR(10);
+                    ALTER TABLE students ADD COLUMN IF NOT EXISTS address TEXT;
+                    ALTER TABLE students ADD COLUMN IF NOT EXISTS emergency_contact VARCHAR(50);
+                    ALTER TABLE students ADD COLUMN IF NOT EXISTS mobile VARCHAR(50);
+                    ALTER TABLE students ADD COLUMN IF NOT EXISTS profile_image VARCHAR(255) DEFAULT 'default_avatar.svg';
+                ");
+            } catch (Exception $e) {}
             
             $sc = $pdo->query("SELECT COUNT(*) FROM settings")->fetchColumn();
             if ($sc == 0) {
